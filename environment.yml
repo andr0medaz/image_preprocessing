@@ -1,0 +1,9 @@
+name: preprocessing_research
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - opencv
+  - pip
+  - python=3.12.13
