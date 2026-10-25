@@ -14,7 +14,7 @@ def letterbox_resize(img, target_size=640, pad_color=(114,114,114)):
     scale = target_size / max(height, width)
     new_width, new_height = int(round(width * scale)), int(round(height * scale))
 
-    # Pilih interpolasi berdasarkan arah resize
+    # Interpolasi berdasarkan arah resize
     interp = cv2.INTER_AREA if scale < 1 else cv2.INTER_LINEAR
     img_resized = cv2.resize(img, (new_width, new_height), interpolation=interp)
 
@@ -33,7 +33,9 @@ def letterbox_resize(img, target_size=640, pad_color=(114,114,114)):
         "original_size": [width, height],
         "scale": scale,
         "pad_left": left,
+        "pad_right": right,
         "pad_top": top,
+        "pad_bottom": bottom,
         "new_size_before_pad": [new_width, new_height]
     }
 
@@ -43,7 +45,7 @@ def process_dataset(input_dir, output_dir, target_size=640, source_label="unknow
     os.makedirs(output_dir, exist_ok=True)
     metadata_all = []
 
-    valid_ext = ('.jpg', '.jpeg', '.png')
+    valid_ext = ('.jpg', '.jpeg', '.png', '.webp')
     files = [f for f in os.listdir(input_dir) if f.lower().endswith(valid_ext)]
 
     for fname in files:
@@ -85,7 +87,7 @@ with open("data_processed/resize_metadata.json", "w") as f:
 print(f"Total diproses: {len(all_metadata)} gambar")
 
 def validate_letterbox_output(output_dir, target_size=640):
-    """Pastikan semua gambar hasil sudah tepat 640x640"""
+    """Memastikan semua gambar hasil sudah tepat 640x640"""
     files = [f for f in os.listdir(output_dir) if f.lower().endswith(('.jpg', '.png'))]
     errors = []
     
