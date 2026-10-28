@@ -3,6 +3,7 @@ from ultralytics.data.split import autosplit
 
 DATASET_DIR = Path("dataset-anotated-19-class")
 RATIO_SPLIT = (0.8, 0.1, 0.1)
+# next refactor gunakan modul yaml saja agar langsung rapih dan langsung buat dari classes exportan label studio
 CLASS_NAMES = [
     "brotowali", 
     "bunga_telang", 
