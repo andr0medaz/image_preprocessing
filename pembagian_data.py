@@ -1,44 +1,29 @@
 from pathlib import Path
 from ultralytics.data.split import autosplit
+import yaml
 
-DATASET_DIR = Path("dataset-anotated-19-class")
-RATIO_SPLIT = (0.8, 0.1, 0.1)
-# next refactor gunakan modul yaml saja agar langsung rapih dan langsung buat dari classes exportan label studio
-CLASS_NAMES = [
-    "brotowali", 
-    "bunga_telang", 
-    "cabai_jawa",
-    "cengkeh",
-    "jahe_merah",
-    "jambu_biji",
-    "jeruk_purut",
-    "kelor",
-    "kencur",
-    "kumis_kucing",
-    "kunyit",
-    "lengkuas",
-    "lidah_buaya",
-    "mengkudu",
-    "pegagan",
-    "sambiloto",
-    "sereh",
-    "sirih",
-    "temulawak"
-]
+DATASET_DIR = Path("dataset-anotated-percobaan-3").resolve()
 
-images_dir = DATASET_DIR / "images"
-labels_dir = DATASET_DIR / "labels"
+"""
+split dengan library autosplit ultralytics
+"""
+autosplit(path=DATASET_DIR / "images", weights=(0.85, 0.14, 0.01), annotated_only=True)
 
-autosplit(path=str(images_dir), weights=RATIO_SPLIT, annotated_only=False)
-
-yaml_lines = [
-    f"path: {DATASET_DIR.resolve().as_posix()}",
-    "train: autosplit_train.txt",
-    "val: autosplit_val.txt",
-    "test: autosplit_test.txt",
-    "names:",
-]
-
-yaml_lines += [f"{i}: {n}" for i, n in enumerate(CLASS_NAMES)]
-(DATASET_DIR / "data.yaml").write_text("\n".join(yaml_lines) + "\n")
-print(f"\ndata.yaml dibuat: {DATASET_DIR / 'data.yaml'}")
+"""
+membuat data.yaml berdasarkan classes.txt hasil export dari label studio
+"""
+names = [l.strip() for l in (DATASET_DIR / "classes.txt").read_text(encoding="utf-8").splitlines() if l.strip()]
+yaml_file = DATASET_DIR / "data.yaml"
+yaml_file.write_text(
+    yaml.safe_dump(
+        {
+            "path": DATASET_DIR.as_posix(),
+            "train": "autosplit_train.txt",
+            "val":"autosplit_val.txt",
+            "names": dict(enumerate(names)),
+        },
+        allow_unicode=True,
+        sort_keys=False,
+    ),
+    encoding="utf-8",
+)
